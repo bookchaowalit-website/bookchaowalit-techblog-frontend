@@ -1,10 +1,83 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Get in touch with Book Chaowalit - Tech Generalist, Full-stack Developer, and Solopreneur. Available for freelance projects, AI integration, and web development consulting in Bangkok, Thailand.",
+  keywords: ["contact", "freelance developer", "full-stack developer", "tech consultant", "AI integration", "Bangkok developer", "web development services", "Book Chaowalit"],
+  openGraph: {
+    title: "Contact Book Chaowalit | Tech Blog",
+    description: "Get in touch with Book Chaowalit - Tech Generalist and Full-stack Developer available for freelance projects and consulting.",
+    type: "profile",
+    images: [
+      {
+        url: "/og-contact.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Contact Book Chaowalit - Tech Developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Book Chaowalit | Tech Blog",
+    description: "Get in touch with Book Chaowalit - Tech Generalist and Full-stack Developer available for freelance projects and consulting.",
+    images: ["/og-contact.jpg"],
+  },
+  alternates: {
+    canonical: "/contact",
+  },
+};
 
 export default function ContactPage() {
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Chaowalit Greepoke",
+    "alternateName": "Book Chaowalit",
+    "jobTitle": ["Tech Generalist", "Full-stack Developer", "Solopreneur"],
+    "description": "Tech Generalist and Solopreneur who enjoys solving problems and building things end-to-end. Works across software engineering, data, AI, and digital growth.",
+    "url": "https://tech.bookchaowalit.com",
+    "image": "https://tech.bookchaowalit.com/profile-image.jpg",
+    "sameAs": [
+      "https://linkedin.com/in/chaowalit-greepoke"
+    ],
+    "knowsAbout": [
+      "Next.js", "React", "TypeScript", "FastAPI", "AI Integration", 
+      "RAG Systems", "Full-stack Development", "SEO", "Data Analysis"
+    ],
+    "workLocation": {
+      "@type": "Place",
+      "name": "Bangkok, Thailand"
+    },
+    "hasOccupation": {
+      "@type": "Occupation",
+      "name": "Freelance Developer",
+      "occupationLocation": {
+        "@type": "Place",
+        "name": "Bangkok, Thailand"
+      },
+      "skills": [
+        "Web Development", "AI Integration", "Data Analysis", 
+        "SEO Optimization", "Full-stack Development"
+      ]
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "professional",
+      "email": "chaowalit.greepoke@example.com",
+      "url": "https://linkedin.com/in/chaowalit-greepoke"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <header className="mb-12">
           <nav className="mb-6 flex gap-3 flex-wrap">

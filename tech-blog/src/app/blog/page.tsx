@@ -1,6 +1,35 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Blog Posts",
+  description: "Explore our collection of programming tutorials, web development guides, React tips, Next.js insights, and modern JavaScript best practices. Stay updated with the latest in tech.",
+  keywords: ["programming blog", "web development tutorials", "React tutorials", "Next.js guides", "JavaScript tips", "TypeScript tutorials", "frontend development", "coding best practices"],
+  openGraph: {
+    title: "Blog Posts | Tech Blog",
+    description: "Explore our collection of programming tutorials, web development guides, React tips, and modern JavaScript best practices.",
+    type: "website",
+    images: [
+      {
+        url: "/og-blog.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Tech Blog - Programming Tutorials and Guides",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog Posts | Tech Blog",
+    description: "Explore our collection of programming tutorials, web development guides, React tips, and modern JavaScript best practices.",
+    images: ["/og-blog.jpg"],
+  },
+  alternates: {
+    canonical: "/blog",
+  },
+};
 
 const blogPosts = [
   {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 interface BlogPost {
   slug: string;
@@ -36,6 +37,53 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
   return null;
 }
 
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getBlogPost(slug);
+  
+  if (!post) {
+    return {
+      title: "Post Not Found",
+    };
+  }
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    keywords: [...post.tags, "programming", "web development", "tutorial", "guide"],
+    authors: [{ name: post.author }],
+    openGraph: {
+      title: `${post.title} | Tech Blog`,
+      description: post.excerpt,
+      type: "article",
+      publishedTime: post.date,
+      authors: [post.author],
+      tags: post.tags,
+      images: [
+        {
+          url: `/og-blog-${slug}.jpg`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${post.title} | Tech Blog`,
+      description: post.excerpt,
+      images: [`/og-blog-${slug}.jpg`],
+    },
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
+  };
+}
+
 export default async function BlogPostPage({ 
   params 
 }: { 
@@ -48,8 +96,43 @@ export default async function BlogPostPage({
     notFound();
   }
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": `https://tech.bookchaowalit.com/og-blog-${slug}.jpg`,
+    "author": {
+      "@type": "Person",
+      "name": post.author,
+      "url": "https://tech.bookchaowalit.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Tech Blog",
+      "url": "https://tech.bookchaowalit.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://tech.bookchaowalit.com/logo.png"
+      }
+    },
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://tech.bookchaowalit.com/blog/${slug}`
+    },
+    "keywords": post.tags.join(", "),
+    "articleSection": "Programming",
+    "inLanguage": "en-US"
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <header className="mb-8">
           <nav className="mb-6 flex gap-3 flex-wrap">
