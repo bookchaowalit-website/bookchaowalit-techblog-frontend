@@ -5,25 +5,25 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with Book Chaowalit - Tech Generalist, Full-stack Developer, and Solopreneur. Available for freelance projects, AI integration, and web development consulting in Bangkok, Thailand.",
-  keywords: ["contact", "freelance developer", "full-stack developer", "tech consultant", "AI integration", "Bangkok developer", "web development services", "Book Chaowalit"],
+  description: "Get in touch with Chaowalit Greepoke (Book) - Tech Generalist, Full-stack Developer, and Solopreneur based in Bangkok, Thailand. Available for freelance projects, AI integration, and web development consulting.",
+  keywords: ["contact", "Chaowalit Greepoke", "Book Chaowalit", "freelance developer", "full-stack developer", "tech consultant", "AI integration", "Bangkok developer", "Thai developer", "web development services"],
   openGraph: {
-    title: "Contact Book Chaowalit | Tech Blog",
-    description: "Get in touch with Book Chaowalit - Tech Generalist and Full-stack Developer available for freelance projects and consulting.",
+    title: "Contact Chaowalit Greepoke (Book) | Chaowalit Greepoke (Book) Tech Blog",
+    description: "Get in touch with Chaowalit Greepoke (Book) - Tech Generalist and Full-stack Developer based in Bangkok, Thailand. Available for freelance projects and consulting.",
     type: "profile",
     images: [
       {
         url: "/og-contact.jpg",
         width: 1200,
         height: 630,
-        alt: "Contact Book Chaowalit - Tech Developer",
+        alt: "Contact Chaowalit Greepoke (Book) - Tech Developer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Contact Book Chaowalit | Tech Blog",
-    description: "Get in touch with Book Chaowalit - Tech Generalist and Full-stack Developer available for freelance projects and consulting.",
+    title: "Contact Chaowalit Greepoke (Book) | Chaowalit Greepoke (Book) Tech Blog",
+    description: "Get in touch with Chaowalit Greepoke (Book) - Tech Generalist and Full-stack Developer based in Bangkok, Thailand. Available for freelance projects and consulting.",
     images: ["/og-contact.jpg"],
   },
   alternates: {
