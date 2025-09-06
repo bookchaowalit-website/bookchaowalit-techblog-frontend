@@ -14,14 +14,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Tech Blog | Modern Web Development & Programming Insights",
-    template: "%s | Tech Blog"
+    default: "Chaowalit Greepoke (Book) Tech Blog | Modern Web Development & Programming Insights",
+    template: "%s | Chaowalit Greepoke (Book) Tech Blog"
   },
-  description: "Expert insights on modern web development, React, Next.js, TypeScript, and programming best practices. Stay updated with the latest tech trends and tutorials.",
-  keywords: ["web development", "programming", "React", "Next.js", "TypeScript", "JavaScript", "frontend", "backend", "tech tutorials", "best practices"],
-  authors: [{ name: "Book Chaowalit", url: "https://tech.bookchaowalit.com" }],
-  creator: "Book Chaowalit",
-  publisher: "Book Chaowalit",
+  description: "Expert insights on modern web development, React, Next.js, TypeScript, and programming best practices by Chaowalit Greepoke (Book). Stay updated with the latest tech trends and tutorials from a Bangkok-based full-stack developer.",
+  keywords: ["Chaowalit Greepoke", "Book Chaowalit", "web development", "programming", "React", "Next.js", "TypeScript", "JavaScript", "frontend", "backend", "tech tutorials", "best practices", "Bangkok developer", "Thai developer"],
+  authors: [{ name: "Chaowalit Greepoke (Book)", url: "https://tech.bookchaowalit.com" }],
+  creator: "Chaowalit Greepoke (Book)",
+  publisher: "Chaowalit Greepoke (Book)",
   metadataBase: new URL("https://tech.bookchaowalit.com"),
   alternates: {
     canonical: "/",
@@ -30,22 +30,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://tech.bookchaowalit.com",
-    siteName: "Tech Blog",
-    title: "Tech Blog | Modern Web Development & Programming Insights",
-    description: "Expert insights on modern web development, React, Next.js, TypeScript, and programming best practices.",
+    siteName: "Chaowalit Greepoke (Book) Tech Blog",
+    title: "Chaowalit Greepoke (Book) Tech Blog | Modern Web Development & Programming Insights",
+    description: "Expert insights on modern web development, React, Next.js, TypeScript, and programming best practices by Chaowalit Greepoke (Book).",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Tech Blog - Modern Web Development Insights",
+        alt: "Chaowalit Greepoke (Book) Tech Blog - Modern Web Development Insights",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tech Blog | Modern Web Development & Programming Insights",
-    description: "Expert insights on modern web development, React, Next.js, TypeScript, and programming best practices.",
+    title: "Chaowalit Greepoke (Book) Tech Blog | Modern Web Development & Programming Insights",
+    description: "Expert insights on modern web development, React, Next.js, TypeScript, and programming best practices by Chaowalit Greepoke (Book).",
     images: ["/og-image.jpg"],
     creator: "@bookchaowalit",
   },
@@ -73,12 +73,13 @@ export default function RootLayout({
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Tech Blog",
-    "description": "Modern web development, programming tips, and tech insights",
+    "name": "Chaowalit Greepoke (Book) Tech Blog",
+    "description": "Modern web development, programming tips, and tech insights by Chaowalit Greepoke (Book)",
     "url": "https://tech.bookchaowalit.com",
     "author": {
       "@type": "Person",
-      "name": "Book Chaowalit",
+      "name": "Chaowalit Greepoke",
+      "alternateName": "Book Chaowalit",
       "url": "https://tech.bookchaowalit.com"
     },
     "potentialAction": {

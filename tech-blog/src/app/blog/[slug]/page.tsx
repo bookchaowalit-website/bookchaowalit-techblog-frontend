@@ -53,29 +53,29 @@ export async function generateMetadata({
 
   return {
     title: post.title,
-    description: post.excerpt,
-    keywords: [...post.tags, "programming", "web development", "tutorial", "guide"],
-    authors: [{ name: post.author }],
+    description: `${post.excerpt} - Learn from Chaowalit Greepoke (Book), a Bangkok-based full-stack developer sharing practical programming insights.`,
+    keywords: [...post.tags, "Chaowalit Greepoke", "Book Chaowalit", "programming", "web development", "tutorial", "guide", "Bangkok developer", "Thai developer"],
+    authors: [{ name: "Chaowalit Greepoke (Book)" }],
     openGraph: {
-      title: `${post.title} | Tech Blog`,
-      description: post.excerpt,
+      title: `${post.title} | Chaowalit Greepoke (Book) Tech Blog`,
+      description: `${post.excerpt} - Learn from Chaowalit Greepoke (Book), a Bangkok-based full-stack developer.`,
       type: "article",
       publishedTime: post.date,
-      authors: [post.author],
-      tags: post.tags,
+      authors: ["Chaowalit Greepoke (Book)"],
+      tags: [...post.tags, "Chaowalit Greepoke", "Book Chaowalit"],
       images: [
         {
           url: `/og-blog-${slug}.jpg`,
           width: 1200,
           height: 630,
-          alt: post.title,
+          alt: `${post.title} by Chaowalit Greepoke (Book)`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${post.title} | Tech Blog`,
-      description: post.excerpt,
+      title: `${post.title} | Chaowalit Greepoke (Book) Tech Blog`,
+      description: `${post.excerpt} - Learn from Chaowalit Greepoke (Book), a Bangkok-based full-stack developer.`,
       images: [`/og-blog-${slug}.jpg`],
     },
     alternates: {
@@ -109,7 +109,7 @@ export default async function BlogPostPage({
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Tech Blog",
+      "name": "Chaowalit Greepoke (Book) Tech Blog",
       "url": "https://tech.bookchaowalit.com",
       "logo": {
         "@type": "ImageObject",

@@ -5,25 +5,25 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Home",
-  description: "Welcome to Tech Blog - your source for modern web development, React tutorials, Next.js guides, TypeScript tips, and programming best practices. Explore expert insights and stay updated with the latest tech trends.",
-  keywords: ["web development blog", "programming tutorials", "React guides", "Next.js tutorials", "TypeScript tips", "JavaScript best practices", "frontend development", "tech insights"],
+  description: "Welcome to Chaowalit Greepoke (Book) Tech Blog - your source for modern web development, React tutorials, Next.js guides, TypeScript tips, and programming best practices by a Bangkok-based full-stack developer. Explore expert insights and stay updated with the latest tech trends.",
+  keywords: ["Chaowalit Greepoke", "Book Chaowalit", "web development blog", "programming tutorials", "React guides", "Next.js tutorials", "TypeScript tips", "JavaScript best practices", "frontend development", "Bangkok developer", "Thai developer", "tech insights"],
   openGraph: {
-    title: "Tech Blog | Modern Web Development & Programming Insights",
-    description: "Welcome to Tech Blog - your source for modern web development tutorials, React guides, and programming best practices.",
+    title: "Chaowalit Greepoke (Book) Tech Blog | Modern Web Development & Programming Insights",
+    description: "Welcome to Chaowalit Greepoke (Book) Tech Blog - your source for modern web development tutorials, React guides, and programming best practices by a Bangkok-based developer.",
     type: "website",
     images: [
       {
         url: "/og-home.jpg",
         width: 1200,
         height: 630,
-        alt: "Tech Blog Homepage - Modern Web Development Insights",
+        alt: "Chaowalit Greepoke (Book) Tech Blog Homepage - Modern Web Development Insights",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tech Blog | Modern Web Development & Programming Insights",
-    description: "Welcome to Tech Blog - your source for modern web development tutorials, React guides, and programming best practices.",
+    title: "Chaowalit Greepoke (Book) Tech Blog | Modern Web Development & Programming Insights",
+    description: "Welcome to Chaowalit Greepoke (Book) Tech Blog - your source for modern web development tutorials, React guides, and programming best practices by a Bangkok-based developer.",
     images: ["/og-home.jpg"],
   },
   alternates: {
