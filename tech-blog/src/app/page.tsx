@@ -32,8 +32,90 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Chaowalit Greepoke (Book) Tech Blog",
+    "description": "Modern web development, programming tips, and tech insights by Chaowalit Greepoke (Book)",
+    "url": "https://tech.bookchaowalit.com",
+    "author": {
+      "@type": "Person",
+      "name": "Chaowalit Greepoke",
+      "alternateName": "Book Chaowalit",
+      "url": "https://tech.bookchaowalit.com/contact",
+      "sameAs": ["https://linkedin.com/in/chaowalit-greepoke"],
+      "jobTitle": ["Tech Generalist", "Full-stack Developer", "Solopreneur"],
+      "workLocation": {
+        "@type": "Place",
+        "name": "Bangkok, Thailand"
+      }
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Chaowalit Greepoke",
+      "alternateName": "Book Chaowalit"
+    },
+    "inLanguage": "en-US",
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "Web Development"
+      },
+      {
+        "@type": "Thing", 
+        "name": "React"
+      },
+      {
+        "@type": "Thing",
+        "name": "Next.js"
+      },
+      {
+        "@type": "Thing",
+        "name": "TypeScript"
+      },
+      {
+        "@type": "Thing",
+        "name": "Programming"
+      }
+    ],
+    "blogPost": [
+      {
+        "@type": "BlogPosting",
+        "headline": "Modern React Development Best Practices",
+        "url": "https://tech.bookchaowalit.com/blog/modern-react-development-best-practices",
+        "datePublished": "2024-01-15",
+        "author": {
+          "@type": "Person",
+          "name": "Chaowalit Greepoke",
+          "alternateName": "Book Chaowalit"
+        }
+      }
+    ]
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://tech.bookchaowalit.com"
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-16">
           <div className="ascii-title text-primary text-xl mb-4">
