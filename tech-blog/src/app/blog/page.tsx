@@ -78,7 +78,7 @@ export default function BlogPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-xl mb-2 font-mono">
-                      <Link 
+                      <Link
                         href={`/blog/${post.slug}`}
                         className="text-primary hover:underline"
                       >
@@ -97,7 +97,7 @@ export default function BlogPage() {
                 </p>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {post.tags.map((tag) => (
-                    <span 
+                    <span
                       key={tag}
                       className="px-2 py-1 bg-muted text-muted-foreground text-xs font-mono border rounded"
                     >
@@ -105,11 +105,12 @@ export default function BlogPage() {
                     </span>
                   ))}
                 </div>
-                <Button asChild variant="outline" size="sm" className="font-mono">
-                  <Link href={`/blog/${post.slug}`}>
-                    cat {post.slug}.mdx
-                  </Link>
-                </Button>
+                <a
+                  href={`/blog/${post.slug}`}
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all border-2 border-primary/20 bg-background shadow-sm hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md dark:bg-input/30 dark:border-input dark:hover:bg-primary dark:hover:border-primary h-9 rounded-md gap-2 px-4 font-mono cursor-pointer focus:ring-2 focus:ring-primary focus:ring-offset-2 w-full justify-start transform hover:scale-[1.02] active:scale-[0.98] no-underline"
+                >
+                  📄 cat {post.slug}.mdx
+                </a>
               </CardContent>
             </Card>
           ))}

@@ -1,11 +1,3 @@
----
-title: "Modern React Development Best Practices"
-date: "2024-01-15"
-excerpt: "Essential patterns and techniques for building scalable React applications in 2024"
-author: "TechBlogger"
-tags: ["react", "javascript", "frontend", "best-practices"]
----
-
 # Modern React Development Best Practices
 
 Welcome to the world of **modern React development**! In this comprehensive guide, we'll explore the essential patterns and best practices for building scalable React applications in 2024.
@@ -90,7 +82,7 @@ function appReducer(state, action) {
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  
+
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {children}

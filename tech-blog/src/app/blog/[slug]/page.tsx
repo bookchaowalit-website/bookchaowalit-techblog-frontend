@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import React from "react";
 
 interface BlogPost {
   slug: string;
@@ -33,18 +34,18 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
       return null;
     }
   }
-  
+
   return null;
 }
 
-export async function generateMetadata({ 
-  params 
-}: { 
+export async function generateMetadata({
+  params
+}: {
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getBlogPost(slug);
-  
+
   if (!post) {
     return {
       title: "Post Not Found",
@@ -84,14 +85,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogPostPage({ 
-  params 
-}: { 
+export default async function BlogPostPage({
+  params
+}: {
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params;
   const post = await getBlogPost(slug);
-  
+
   if (!post) {
     notFound();
   }
@@ -152,7 +153,7 @@ export default async function BlogPostPage({
               </Link>
             </Button>
           </nav>
-          
+
           <div className="ascii-art text-muted-foreground text-xs mb-6">
 {`╭─────────────────────────────────────────╮
 │              cat ${post.slug.padEnd(13)}.mdx │
@@ -166,10 +167,10 @@ export default async function BlogPostPage({
               <div>Author: {post.author}</div>
               <div>Size: {Math.floor(Math.random() * 9999) + 1000} bytes</div>
             </div>
-            
+
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag) => (
-                <span 
+                <span
                   key={tag}
                   className="px-2 py-1 bg-muted text-muted-foreground text-xs font-mono border rounded"
                 >
@@ -195,12 +196,12 @@ export default async function BlogPostPage({
                 cd ../blog/
               </Link>
             </Button>
-            
+
             <div className="text-muted-foreground text-sm font-mono">
               <span className="text-primary">$</span> tail -f {post.slug}.mdx
             </div>
           </div>
-          
+
           <div className="mt-6 text-center">
             <div className="ascii-art text-muted-foreground text-xs">
 {`╭─────────────────────────────╮
