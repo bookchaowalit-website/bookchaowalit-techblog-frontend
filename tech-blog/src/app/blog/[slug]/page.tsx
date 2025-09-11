@@ -16,23 +16,110 @@ interface BlogPost {
 }
 
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  // For now, let's just handle the one post we know exists
+  // Handle different blog posts
   if (slug === "modern-react-development-best-practices") {
-    try {
-      const { default: Content } = await import(`../../../../content/blog/modern-react-development-best-practices.mdx`);
-      return {
-        slug,
-        title: "Modern React Development Best Practices",
-        date: "2024-01-15",
-        excerpt: "Essential patterns and techniques for building scalable React applications in 2024",
-        author: "TechBlogger",
-        tags: ["react", "javascript", "frontend", "best-practices"],
-        content: <Content />
-      };
-    } catch (error) {
-      console.error("Error loading blog post:", error);
-      return null;
-    }
+    const content = (
+      <div>
+        <h1>Modern React Development Best Practices</h1>
+        <p>Welcome to the world of modern React development!</p>
+        <p>This comprehensive guide covers essential patterns and techniques for building scalable React applications in 2024.</p>
+        <h2>Key Topics Covered:</h2>
+        <ul>
+          <li>Component Composition</li>
+          <li>State Management with Hooks</li>
+          <li>Performance Optimization</li>
+          <li>TypeScript Integration</li>
+        </ul>
+      </div>
+    );
+
+    return {
+      slug,
+      title: "Modern React Development Best Practices",
+      date: "2024-01-15",
+      excerpt: "Essential patterns and techniques for building scalable React applications in 2024",
+      author: "TechBlogger",
+      tags: ["react", "javascript", "frontend", "best-practices"],
+      content: content
+    };
+  }
+
+  if (slug === "nextjs-15-new-features") {
+    const content = (
+      <div>
+        <h1>Next.js 15: New Features and Improvements</h1>
+        <p>Next.js 15 brings exciting new features and significant improvements to the React framework.</p>
+        <h2>What&apos;s New in Next.js 15:</h2>
+        <ul>
+          <li>Enhanced Turbopack performance</li>
+          <li>New API improvements</li>
+          <li>Better TypeScript support</li>
+          <li>Improved developer experience</li>
+        </ul>
+      </div>
+    );
+
+    return {
+      slug,
+      title: "Next.js 15: New Features and Improvements",
+      date: "2024-12-01",
+      excerpt: "Explore the latest features in Next.js 15 including Turbopack improvements and new API enhancements",
+      author: "TechBlogger",
+      tags: ["nextjs", "react", "web-development", "turbopack"],
+      content: content
+    };
+  }
+
+  if (slug === "typescript-advanced-patterns") {
+    const content = (
+      <div>
+        <h1>Advanced TypeScript Patterns for React</h1>
+        <p>Master advanced TypeScript patterns to write more robust and maintainable React applications.</p>
+        <h2>Advanced Patterns:</h2>
+        <ul>
+          <li>Conditional Types</li>
+          <li>Mapped Types</li>
+          <li>Utility Types</li>
+          <li>Generic Constraints</li>
+        </ul>
+      </div>
+    );
+
+    return {
+      slug,
+      title: "Advanced TypeScript Patterns for React",
+      date: "2024-11-15",
+      excerpt: "Master advanced TypeScript patterns including conditional types, mapped types, and utility types",
+      author: "TechBlogger",
+      tags: ["typescript", "react", "advanced", "patterns"],
+      content: content
+    };
+  }
+
+  if (slug === "tailwind-css-best-practices") {
+    const content = (
+      <div>
+        <h1>Tailwind CSS Best Practices and Tips</h1>
+        <p>Learn how to write maintainable and scalable CSS with Tailwind&apos;s utility-first approach.</p>
+        <h2>Best Practices:</h2>
+        <ul>
+          <li>Component-based styling</li>
+          <li>Custom utility classes</li>
+          <li>Responsive design patterns</li>
+          <li>Performance optimization</li>
+        </ul>
+      </div>
+    );
+
+    return {
+      slug,
+      title: "Tailwind CSS Best Practices and Tips",
+      date: "2024-10-20",
+      excerpt: "Learn how to write maintainable and scalable CSS with Tailwind's utility-first approach",
+      author: "TechBlogger",
+      tags: ["tailwind", "css", "frontend", "design"],
+      content: content
+    };
   }
 
   return null;
