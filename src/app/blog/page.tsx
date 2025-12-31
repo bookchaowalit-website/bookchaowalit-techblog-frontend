@@ -2,6 +2,9 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Metadata } from "next";
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
 export const metadata: Metadata = {
   title: "Blog Posts",
@@ -31,18 +34,34 @@ export const metadata: Metadata = {
   },
 };
 
-const blogPosts = [
-  {
-    slug: "modern-react-development-best-practices",
-    title: "Modern React Development Best Practices",
-    excerpt: "Essential patterns and techniques for building scalable React applications in 2024",
-    date: "2024-01-15",
-    tags: ["react", "javascript", "frontend", "best-practices"],
-    author: "TechBlogger"
-  }
-];
+async function getAllBlogPosts() {
+  const blogDir = path.join(process.cwd(), 'content/blog');
+  const files = fs.readdirSync(blogDir).filter(file => file.endsWith('.mdx'));
+  const posts = files.map(file => {
+    const slug = file.replace('.mdx', '');
+    const filePath = path.join(blogDir, file);
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const { data } = matter(fileContents);
+    return {
+      slug,
+      title: data.title,
+      excerpt: data.excerpt,
+      date: data.date,
+      // Normalize tags: allow an array, a comma-separated string, or undefined
+      tags: Array.isArray(data.tags)
+        ? data.tags
+        : typeof data.tags === 'string'
+        ? data.tags.split(',').map((t) => t.trim()).filter(Boolean)
+        : [],
+      author: data.author,
+    };
+  });
+  return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getAllBlogPosts();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -72,7 +91,7 @@ export default function BlogPage() {
         </header>
 
         <div className="grid gap-6 md:gap-8">
-          {blogPosts.map((post) => (
+          {posts.map((post) => (
             <Card key={post.slug} className="terminal-border">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -96,7 +115,7 @@ export default function BlogPage() {
                   {post.excerpt}
                 </p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {post.tags.map((tag) => (
+                  {(post.tags || []).map((tag) => (
                     <span
                       key={tag}
                       className="px-2 py-1 bg-muted text-muted-foreground text-xs font-mono border rounded"
@@ -120,7 +139,7 @@ export default function BlogPage() {
           <div className="ascii-art text-muted-foreground text-sm">
 {`╭─────────────────────────────╮
 │     End of file listing     │
-│      1 file(s) found        │
+│      ${posts.length} file(s) found        │
 ╰─────────────────────────────╯`}
           </div>
         </div>

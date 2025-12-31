@@ -1,0 +1,63 @@
+# Node modules
+node_modules/
+
+# Next.js build output
+.next/
+.next/cache/
+out/
+.build/
+
+# Production
+/dist/
+/build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# TypeScript
+*.tsbuildinfo
+
+# Turborepo / Turbopack / cache
+.turbo/
+.turbopack/
+.cache/
+.cache-loader/
+
+# Vercel
+.vercel/
+.vercel/output/
+
+# Test coverage
+coverage/
+.vitest/
+.c8/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors & IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Misc
+.sass-cache/
+.cache/
+.parcel-cache/
+
+# Ignore local files
+*.local
+

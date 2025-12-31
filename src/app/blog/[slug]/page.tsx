@@ -4,6 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import React from "react";
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { compileMDX } from 'next-mdx-remote/rsc';
+import remarkToc from 'remark-toc';
+import ProgressBar from '@/components/ProgressBar';
+import { Twitter, Linkedin } from 'lucide-react';
 
 interface BlogPost {
   slug: string;
@@ -13,116 +20,40 @@ interface BlogPost {
   author: string;
   tags: string[];
   content: React.ReactNode;
+  readingTime: number;
 }
 
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  // Handle different blog posts
-  if (slug === "modern-react-development-best-practices") {
-    const content = (
-      <div>
-        <h1>Modern React Development Best Practices</h1>
-        <p>Welcome to the world of modern React development!</p>
-        <p>This comprehensive guide covers essential patterns and techniques for building scalable React applications in 2024.</p>
-        <h2>Key Topics Covered:</h2>
-        <ul>
-          <li>Component Composition</li>
-          <li>State Management with Hooks</li>
-          <li>Performance Optimization</li>
-          <li>TypeScript Integration</li>
-        </ul>
-      </div>
-    );
-
-    return {
-      slug,
-      title: "Modern React Development Best Practices",
-      date: "2024-01-15",
-      excerpt: "Essential patterns and techniques for building scalable React applications in 2024",
-      author: "TechBlogger",
-      tags: ["react", "javascript", "frontend", "best-practices"],
-      content: content
-    };
+  const filePath = path.join(process.cwd(), 'content/blog', `${slug}.mdx`);
+  if (!fs.existsSync(filePath)) {
+    return null;
   }
-
-  if (slug === "nextjs-15-new-features") {
-    const content = (
-      <div>
-        <h1>Next.js 15: New Features and Improvements</h1>
-        <p>Next.js 15 brings exciting new features and significant improvements to the React framework.</p>
-        <h2>What&apos;s New in Next.js 15:</h2>
-        <ul>
-          <li>Enhanced Turbopack performance</li>
-          <li>New API improvements</li>
-          <li>Better TypeScript support</li>
-          <li>Improved developer experience</li>
-        </ul>
-      </div>
-    );
-
-    return {
-      slug,
-      title: "Next.js 15: New Features and Improvements",
-      date: "2024-12-01",
-      excerpt: "Explore the latest features in Next.js 15 including Turbopack improvements and new API enhancements",
-      author: "TechBlogger",
-      tags: ["nextjs", "react", "web-development", "turbopack"],
-      content: content
-    };
-  }
-
-  if (slug === "typescript-advanced-patterns") {
-    const content = (
-      <div>
-        <h1>Advanced TypeScript Patterns for React</h1>
-        <p>Master advanced TypeScript patterns to write more robust and maintainable React applications.</p>
-        <h2>Advanced Patterns:</h2>
-        <ul>
-          <li>Conditional Types</li>
-          <li>Mapped Types</li>
-          <li>Utility Types</li>
-          <li>Generic Constraints</li>
-        </ul>
-      </div>
-    );
-
-    return {
-      slug,
-      title: "Advanced TypeScript Patterns for React",
-      date: "2024-11-15",
-      excerpt: "Master advanced TypeScript patterns including conditional types, mapped types, and utility types",
-      author: "TechBlogger",
-      tags: ["typescript", "react", "advanced", "patterns"],
-      content: content
-    };
-  }
-
-  if (slug === "tailwind-css-best-practices") {
-    const content = (
-      <div>
-        <h1>Tailwind CSS Best Practices and Tips</h1>
-        <p>Learn how to write maintainable and scalable CSS with Tailwind&apos;s utility-first approach.</p>
-        <h2>Best Practices:</h2>
-        <ul>
-          <li>Component-based styling</li>
-          <li>Custom utility classes</li>
-          <li>Responsive design patterns</li>
-          <li>Performance optimization</li>
-        </ul>
-      </div>
-    );
-
-    return {
-      slug,
-      title: "Tailwind CSS Best Practices and Tips",
-      date: "2024-10-20",
-      excerpt: "Learn how to write maintainable and scalable CSS with Tailwind's utility-first approach",
-      author: "TechBlogger",
-      tags: ["tailwind", "css", "frontend", "design"],
-      content: content
-    };
-  }
-
-  return null;
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const { data, content } = matter(fileContents);
+  const wordCount = content.split(/\s+/).length;
+  const readingTime = Math.ceil(wordCount / 200);
+  const mdxSource = await compileMDX({
+    source: content,
+    options: {
+      parseFrontmatter: true,
+      remarkPlugins: [remarkToc],
+    },
+  });
+  return {
+    slug,
+    title: data.title,
+    date: data.date,
+    excerpt: data.excerpt,
+    author: data.author,
+    // Normalize tags: accept array, comma-separated string, or default to empty array
+    tags: Array.isArray(data.tags)
+      ? data.tags
+      : typeof data.tags === 'string'
+      ? data.tags.split(',').map((t) => t.trim()).filter(Boolean)
+      : [],
+    content: mdxSource.content,
+    readingTime,
+  };
 }
 
 export async function generateMetadata({
@@ -142,7 +73,7 @@ export async function generateMetadata({
   return {
     title: post.title,
     description: `${post.excerpt} - Learn from Chaowalit Greepoke (Book), a Bangkok-based full-stack developer sharing practical programming insights.`,
-    keywords: [...post.tags, "Chaowalit Greepoke", "Book Chaowalit", "programming", "web development", "tutorial", "guide", "Bangkok developer", "Thai developer"],
+    keywords: [...(post.tags || []), "Chaowalit Greepoke", "Book Chaowalit", "programming", "web development", "tutorial", "guide", "Bangkok developer", "Thai developer"],
     authors: [{ name: "Chaowalit Greepoke (Book)" }],
     openGraph: {
       title: `${post.title} | Chaowalit Greepoke (Book) Tech Blog`,
@@ -150,7 +81,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: post.date,
       authors: ["Chaowalit Greepoke (Book)"],
-      tags: [...post.tags, "Chaowalit Greepoke", "Book Chaowalit"],
+      tags: [...(post.tags || []), "Chaowalit Greepoke", "Book Chaowalit"],
       images: [
         {
           url: `/og-blog-${slug}.jpg`,
@@ -210,13 +141,14 @@ export default async function BlogPostPage({
       "@type": "WebPage",
       "@id": `https://tech.bookchaowalit.com/blog/${slug}`
     },
-    "keywords": post.tags.join(", "),
+    "keywords": (post.tags || []).join(", "),
     "articleSection": "Programming",
     "inLanguage": "en-US"
   };
 
   return (
     <div className="min-h-screen bg-background">
+      <ProgressBar />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
@@ -253,10 +185,11 @@ export default async function BlogPostPage({
               <div>Modified: {post.date}</div>
               <div>Author: {post.author}</div>
               <div>Size: {Math.floor(Math.random() * 9999) + 1000} bytes</div>
+              <div>Reading time: {post.readingTime} min</div>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {(post.tags || []).map((tag) => (
                 <span
                   key={tag}
                   className="px-2 py-1 bg-muted text-muted-foreground text-xs font-mono border rounded"
@@ -294,6 +227,27 @@ export default async function BlogPostPage({
 {`╭─────────────────────────────╮
 │         End of file         │
 ╰─────────────────────────────╯`}
+            </div>
+            <div className="mt-6">
+              <p className="text-sm text-muted-foreground mb-2">Share this post:</p>
+              <div className="flex justify-center gap-2">
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://tech.bookchaowalit.com/blog/${post.slug}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-background border rounded hover:bg-muted"
+                >
+                  <Twitter size={20} />
+                </a>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://tech.bookchaowalit.com/blog/${post.slug}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-background border rounded hover:bg-muted"
+                >
+                  <Linkedin size={20} />
+                </a>
+              </div>
             </div>
           </div>
         </footer>
