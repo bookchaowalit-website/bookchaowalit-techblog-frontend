@@ -36,7 +36,9 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
     source: content,
     options: {
       parseFrontmatter: true,
-      remarkPlugins: [remarkToc],
+      mdxOptions: {
+        remarkPlugins: [remarkToc],
+      },
     },
   });
   return {
