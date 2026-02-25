@@ -55,13 +55,13 @@ export async function GET() {
 async function handleMCPRequest(request: NextRequest) {
   try {
     const body = await request.json();
-    const { method, params } = body;
+    const { method, params, id } = body;
 
     switch (method) {
       case 'initialize':
         return NextResponse.json({
           jsonrpc: '2.0',
-          id: body.id,
+          id: id,
           result: {
             protocolVersion: '2024-11-05',
             capabilities: { tools: {} },
@@ -72,14 +72,14 @@ async function handleMCPRequest(request: NextRequest) {
       case 'tools/list':
         return NextResponse.json({
           jsonrpc: '2.0',
-          id: body.id,
+          id: id,
           result: { tools: TOOLS }
         });
 
       case 'tools/call':
         return NextResponse.json({
           jsonrpc: '2.0',
-          id: body.id,
+          id: id,
           result: {
             content: [{
               type: 'text',
@@ -94,7 +94,7 @@ async function handleMCPRequest(request: NextRequest) {
       default:
         return NextResponse.json({
           jsonrpc: '2.0',
-          id: body.id,
+          id: id,
           error: { code: -32601, message: 'Method not found' }
         });
     }
