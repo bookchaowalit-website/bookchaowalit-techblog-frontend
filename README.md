@@ -127,3 +127,9 @@ npm run lint
 ---
 
 Built with ❤️ for developers, by developers using Next.js, shadcn/ui, and MDX
+
+## Related
+
+- **Mobile App:** [bookchaowalit-techblog-mobile](https://github.com/bookchaowalit-mobile/bookchaowalit-techblog-mobile)
+- **Portfolio:** [bookchaowalit.com](https://bookchaowalit.com)
+
