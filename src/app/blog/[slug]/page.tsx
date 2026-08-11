@@ -11,6 +11,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkToc from 'remark-toc';
 import ProgressBar from '@/components/ProgressBar';
 import { Twitter, Linkedin } from 'lucide-react';
+import { useMDXComponents } from '../../../../mdx-components';
 
 interface BlogPost {
   slug: string;
@@ -40,6 +41,18 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
         remarkPlugins: [remarkToc],
       },
     },
+    // Without this, mdx-components.tsx's custom h1-h3/code/pre/blockquote
+    // overrides (including the copy-to-clipboard button) never applied —
+    // that file's convention only auto-wires for @next/mdx page routes,
+    // not next-mdx-remote's compileMDX(), which needs components passed
+    // explicitly. Every blog post was rendering as unstyled default HTML.
+    //
+    // useMDXComponents is the fixed name required by the MDX/@next/mdx
+    // convention, not an actual React Hook: its body calls no hooks
+    // itself, only returns an object of components, so calling it from
+    // this async data-loading function (not a component) is safe.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    components: useMDXComponents({}),
   });
   return {
     slug,

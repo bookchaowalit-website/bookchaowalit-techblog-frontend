@@ -98,7 +98,7 @@ async function handleMCPRequest(request: NextRequest) {
           error: { code: -32601, message: 'Method not found' }
         });
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json({
       jsonrpc: '2.0',
       error: { code: -32700, message: 'Parse error' }

@@ -1,7 +1,6 @@
 import type { MDXComponents } from 'mdx/types'
-import { Copy } from 'lucide-react'
-import React from 'react'
- 
+import { Pre } from '@/components/mdx-pre'
+
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     h1: ({ children }) => (
@@ -29,30 +28,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </code>
     ),
-    pre: ({ children }) => {
-      const [copied, setCopied] = React.useState(false);
-      const handleCopy = async () => {
-        const text = (children as any).props.children;
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      };
-      return (
-        <div className="relative group">
-          <pre className="bg-muted p-4 rounded-lg overflow-x-auto border mb-4 font-mono text-sm">
-            {children}
-          </pre>
-          <button
-            onClick={handleCopy}
-            className="absolute top-2 right-2 p-1 bg-background border rounded opacity-0 group-hover:opacity-100 transition-opacity hover:bg-muted"
-            title="Copy code"
-          >
-            <Copy size={16} />
-          </button>
-          {copied && <span className="absolute top-2 right-10 text-xs bg-background px-1 rounded">Copied!</span>}
-        </div>
-      );
-    },
+    pre: Pre,
     blockquote: ({ children }) => (
       <blockquote className="border-l-4 border-primary pl-4 my-4 italic bg-muted/50 p-4 rounded-r-lg">
         {children}

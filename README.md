@@ -89,6 +89,18 @@ The blog features a unique ASCII/terminal-inspired design with:
 - **Blinking Cursors**: Animated terminal elements
 - **Command-line Navigation**: Unix-style breadcrumbs
 
+**Note on `mdx-components.tsx`:** this file's custom h1–h3/code/pre/
+blockquote overrides — the actual implementation of the terminal aesthetic
+above, for article body content — were defined but never applied. Next.js's
+`useMDXComponents` convention auto-wires for `@next/mdx` file-based `.mdx`
+page routes; this blog instead loads posts from `content/blog/*.mdx` at
+runtime via `next-mdx-remote/rsc`'s `compileMDX()`, which needs its
+`components` passed explicitly and wasn't receiving them. Every blog post
+was rendering as unstyled default HTML. Fixed in `src/app/blog/[slug]/page.tsx`.
+The `pre` override (a copy-to-clipboard button) also needed splitting into
+its own `"use client"` file (`src/components/mdx-pre.tsx`) once wired up —
+`compileMDX`'s Server Component render tree can't run `useState` inline.
+
 ## Deployment
 
 This project is optimized for Vercel deployment:
