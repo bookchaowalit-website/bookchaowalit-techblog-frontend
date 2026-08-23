@@ -102,6 +102,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* THESIS: Tech Blog is a technical notebook. OWN-WORLD: PC98 text window and phosphor accents. STORY: boot, inspect, open one note. FIRST VIEWPORT: show the machine frame and latest document. FORM: seed 1df06217 assigned PC98 window direction. FINISH: dithered texture, mono metadata, no fabricated volume. */}
         <Analytics />
         <SpeedInsights />
         {children}
