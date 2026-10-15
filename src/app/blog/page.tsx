@@ -44,6 +44,7 @@ async function getAllBlogPosts() {
     const { data } = matter(fileContents);
     return {
       slug,
+      sizeBytes: Buffer.byteLength(fileContents, "utf8"),
       title: data.title,
       excerpt: data.excerpt,
       date: data.date,
@@ -105,7 +106,7 @@ export default async function BlogPage() {
                       </Link>
                     </CardTitle>
                     <div className="text-sm text-muted-foreground font-mono space-y-1">
-                      <div>-rw-r--r-- 1 {post.author} {post.author} {Math.floor(Math.random() * 9999) + 1000} {post.date} {post.slug}.mdx</div>
+                      <div>-rw-r--r-- 1 {post.author} {post.author} {post.sizeBytes} {post.date} {post.slug}.mdx</div>
                     </div>
                   </div>
                 </div>

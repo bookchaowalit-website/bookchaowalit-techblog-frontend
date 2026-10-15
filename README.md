@@ -10,7 +10,7 @@ A modern tech blog built with Next.js, featuring a unique Text-Art ASCII design 
 
 ## Features
 
-- 🚀 **Next.js 15** with App Router
+- 🚀 **Next.js 16** with App Router
 - 🎨 **shadcn/ui** components
 - 📝 **MDX** for blog content
 - 🎯 **Text-Art ASCII** design theme
@@ -20,7 +20,7 @@ A modern tech blog built with Next.js, featuring a unique Text-Art ASCII design 
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 with TypeScript
+- **Framework**: Next.js 16 with TypeScript
 - **Styling**: Tailwind CSS v4
 - **UI Components**: shadcn/ui
 - **Content**: MDX
@@ -69,8 +69,9 @@ Create new MDX files in the `content/blog/` directory:
 ---
 title: "Your Tech Post Title"
 date: "2024-01-15"
-excerpt: "Brief technical description"
-author: "TechBlogger"
+summary: "What the reader can reproduce"
+excerpt: "What the reader can reproduce"
+author: "Technical Notes"
 tags: ["react", "javascript", "frontend"]
 ---
 
@@ -145,3 +146,24 @@ Built with ❤️ for developers, by developers using Next.js, shadcn/ui, and MD
 - **Mobile App:** [bookchaowalit-techblog-mobile](https://github.com/bookchaowalit-mobile/bookchaowalit-techblog-mobile)
 - **Portfolio:** [bookchaowalit.com](https://bookchaowalit.com)
 
+
+## Article verification
+
+Five technical articles live under `content/blog/`. Frontmatter includes title,
+date, summary, excerpt (the list-page field), author and tags. The four new
+articles use synthetic data and link to primary documentation; they do not
+claim personal experience, customer outcomes or deployed results.
+
+~~~bash
+npm ci
+npm test
+npm run lint
+npm run typecheck
+npm run build
+~~~
+
+The Node test runner checks every article's metadata, compiles its MDX with the
+same compiler used by `/blog/[slug]`, and executes each complete JavaScript
+example. Use Node 22+ for the test command. A production preview of each slug
+checks the real page and component wiring. Publication remains a separate
+owner-reviewed release step.

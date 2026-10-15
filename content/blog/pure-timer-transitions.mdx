@@ -1,0 +1,59 @@
+---
+title: "Test a timer transition without waiting for the clock"
+date: "2026-10-15"
+summary: "Keep countdown completion, session counting and break selection in one pure transition."
+excerpt: "Keep countdown completion, session counting and break selection in one pure transition."
+author: "Technical Notes"
+tags: ["state-machines", "timers", "testing"]
+---
+
+# Test a timer transition without waiting for the clock
+
+A timer combines two concerns: a source of ticks and a rule for the next state. Separating them makes the completion rule testable without waiting through a real focus session.
+
+Represent the mode, remaining seconds, running flag and completed-session count together. A transition can then return their next values atomically. The interval callback has one job: apply that transition. Avoid starting another timer, playing a sound or writing storage inside the transition.
+
+## Define a small transition
+Save the block as `example.mjs` and run `node example.mjs`.
+
+~~~js
+import assert from "node:assert/strict";
+const durations = { work: 1500, shortBreak: 300, longBreak: 900 };
+
+function tick(state) {
+  if (!state.active) return state;
+  if (state.remaining > 1) {
+    return { ...state, remaining: state.remaining - 1 };
+  }
+  const sessions = state.sessions + (state.mode === "work" ? 1 : 0);
+  const mode = state.mode === "work"
+    ? (sessions % 4 === 0 ? "longBreak" : "shortBreak")
+    : "work";
+  return { mode, remaining: durations[mode], active: false, sessions };
+}
+
+const finishing = { mode: "work", remaining: 1, active: true, sessions: 3 };
+const next = tick(finishing);
+assert.deepEqual(next, {
+  mode: "longBreak", remaining: 900, active: false, sessions: 4
+});
+assert.deepEqual(tick(next), next);
+assert.equal(finishing.sessions, 3);
+assert.deepEqual(
+  tick({ mode: "shortBreak", remaining: 1, active: true, sessions: 4 }),
+  { mode: "work", remaining: 1500, active: false, sessions: 4 }
+);
+console.log("timer transition example passed");
+~~~
+
+The finished session increments once, then the returned state is paused. Applying another tick to that paused state does not count another session. Finishing a break returns to work without incrementing the work-session count.
+
+## Place effects outside the rule
+In a React component, an effect can create the interval while active and clear it during cleanup. Its callback can apply `tick` through a functional state update. A reducer is another way to organize the same state rule when more events need explicit action names.
+
+Keep reset and mode selection explicit: decide whether they preserve the completed-session count and whether they pause the next mode. Tests should assert those decisions instead of relying on the order of several independent state setters.
+
+## State the time model
+This rule counts delivered one-second ticks. It does not correct for browser throttling, a sleeping device or a background tab. An elapsed-time timer needs a reference instant and a policy for reconciling missed time. Passing transition tests does not establish that a browser schedules callbacks exactly once per second.
+
+References: [React: extracting state logic into a reducer](https://react.dev/learn/extracting-state-logic-into-a-reducer), [React: useEffect cleanup](https://react.dev/reference/react/useEffect).

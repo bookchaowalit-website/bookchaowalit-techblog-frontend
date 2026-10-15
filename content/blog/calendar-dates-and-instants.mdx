@@ -1,0 +1,59 @@
+---
+title: "Separate calendar dates from instants"
+date: "2026-10-15"
+summary: "Compare date-only values in UTC and format an instant in a deliberately selected timezone."
+excerpt: "Compare date-only values in UTC and format an instant in a deliberately selected timezone."
+author: "Technical Notes"
+tags: ["dates", "intl", "javascript"]
+---
+
+# Separate calendar dates from instants
+
+A due date such as February 29 is a calendar value. A timestamp with a Z suffix identifies an instant. Mixing those concepts can make a date comparison depend on the visitor's timezone.
+
+For a date-only calculator, choose one arithmetic convention and validate the input before subtraction. For displaying an instant, choose the timezone that the product intends to show. These are separate decisions.
+
+## Validate before calculating
+Save this as `example.mjs` and run `node example.mjs`.
+
+~~~js
+import assert from "node:assert/strict";
+
+function calendarInstant(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new Error("Use YYYY-MM-DD");
+  const date = new Date(value + "T00:00:00Z");
+  if (!Number.isFinite(date.getTime())
+    || date.toISOString().slice(0, 10) !== value) {
+    throw new Error("Invalid calendar date");
+  }
+  return date;
+}
+function daysBetween(start, end) {
+  return (calendarInstant(end) - calendarInstant(start)) / 86400000;
+}
+function dayInZone(instant, timeZone) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone, year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(instant);
+  const field = type => parts.find(part => part.type === type).value;
+  return field("year") + "-" + field("month") + "-" + field("day");
+}
+
+assert.equal(daysBetween("2024-02-28", "2024-03-01"), 2);
+assert.equal(daysBetween("2024-03-01", "2024-02-28"), -2);
+assert.throws(() => calendarInstant("2023-02-29"));
+assert.equal(dayInZone(new Date("2024-02-28T17:00:00Z"), "Asia/Bangkok"), "2024-02-29");
+console.log("calendar example passed");
+~~~
+
+The round-trip comparison with the original input rejects dates that the Date parser normalizes into a different calendar date. The difference uses UTC midnights, so its arithmetic does not pick the visitor's local daylight-saving offset.
+
+## Read the answer in the right unit
+The result is a signed difference between calendar-day anchors. It is not a business-day count, an inclusive count of both endpoints or a measurement of hours lived in a local timezone. State those alternatives explicitly if a product offers them.
+
+The formatter extracts named fields rather than splitting a locale-formatted string. That keeps the data construction independent of punctuation choices in a locale's display format.
+
+## Keep month arithmetic separate
+A month is not a fixed count of days. This example deliberately implements only a day difference. A month-shift feature needs a documented end-of-month rule and its own tests; dividing days by an average month length answers a different question.
+
+References: [Date.UTC](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/UTC), [Intl.DateTimeFormat.formatToParts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatToParts).

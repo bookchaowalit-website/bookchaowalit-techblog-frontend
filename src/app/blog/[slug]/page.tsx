@@ -22,6 +22,7 @@ interface BlogPost {
   tags: string[];
   content: React.ReactNode;
   readingTime: number;
+  sizeBytes: number;
 }
 
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
@@ -68,6 +69,7 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
       : [],
     content: mdxSource.content,
     readingTime,
+    sizeBytes: Buffer.byteLength(fileContents, "utf8"),
   };
 }
 
@@ -199,7 +201,7 @@ export default async function BlogPostPage({
               <div>File: {post.slug}.mdx</div>
               <div>Modified: {post.date}</div>
               <div>Author: {post.author}</div>
-              <div>Size: {Math.floor(Math.random() * 9999) + 1000} bytes</div>
+              <div>Size: {post.sizeBytes} bytes</div>
               <div>Reading time: {post.readingTime} min</div>
             </div>
 

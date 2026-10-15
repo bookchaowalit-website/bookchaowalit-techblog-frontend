@@ -1,141 +1,59 @@
-# Modern React Development Best Practices
-
-Welcome to the world of **modern React development**! In this comprehensive guide, we'll explore the essential patterns and best practices for building scalable React applications in 2024.
-
-## Key Principles for Modern React
-
-Modern React development focuses on several core principles:
-
-- **Component Composition**: Building reusable, composable components
-- **State Management**: Efficient state handling with hooks and context
-- **Performance Optimization**: Leveraging React's built-in optimizations
-- **Type Safety**: Using TypeScript for better developer experience
-
-## Essential Hooks and Patterns
-
-### 1. Custom Hooks
-```tsx
-// Custom hook for API data fetching
-function useApiData<T>(url: string) {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch(url)
-      .then(response => response.json())
-      .then(setData)
-      .catch(setError)
-      .finally(() => setLoading(false));
-  }, [url]);
-
-  return { data, loading, error };
-}
-```
-
-### 2. Component Patterns
-Modern React emphasizes composition over inheritance:
-
-```tsx
-// Compound component pattern
-function Card({ children }) {
-  return <div className="card">{children}</div>;
-}
-
-Card.Header = ({ children }) => (
-  <div className="card-header">{children}</div>
-);
-
-Card.Body = ({ children }) => (
-  <div className="card-body">{children}</div>
-);
-```
-
-### 3. Performance Optimization
-
-> "Premature optimization is the root of all evil, but knowing when and how to optimize is crucial." - Adapted from Donald Knuth
-
-Key optimization techniques:
-
-1. **Use React.memo** for expensive components
-2. **Implement useMemo** for complex calculations
-3. **Apply useCallback** for stable function references
-4. **Leverage code splitting** with React.lazy
-
-## Modern State Management
-
-### Context + useReducer Pattern
-```tsx
-// Modern state management without external libraries
-const AppContext = createContext();
-
-function appReducer(state, action) {
-  switch (action.type) {
-    case 'SET_USER':
-      return { ...state, user: action.payload };
-    case 'SET_THEME':
-      return { ...state, theme: action.payload };
-    default:
-      return state;
-  }
-}
-
-export function AppProvider({ children }) {
-  const [state, dispatch] = useReducer(appReducer, initialState);
-
-  return (
-    <AppContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppContext.Provider>
-  );
-}
-```
-
-## Best Practices Checklist
-
-- ✅ **Use TypeScript** for type safety and better DX
-- ✅ **Implement proper error boundaries**
-- ✅ **Follow consistent naming conventions**
-- ✅ **Write comprehensive tests** with React Testing Library
-- ✅ **Use ESLint and Prettier** for code quality
-- ✅ **Implement proper accessibility** (a11y)
-
-## File Structure and Organization
-
-```
-src/
-├── components/
-│   ├── ui/              # Reusable UI components
-│   ├── forms/           # Form-specific components
-│   └── layout/          # Layout components
-├── hooks/               # Custom hooks
-├── contexts/            # React contexts
-├── utils/               # Utility functions
-├── types/               # TypeScript type definitions
-└── __tests__/           # Test files
-```
-
-## Testing Strategy
-
-Modern React testing focuses on user behavior rather than implementation details:
-
-```tsx
-// Good: Testing behavior
-test('displays user name when logged in', () => {
-  render(<UserProfile user={{ name: 'John' }} />);
-  expect(screen.getByText('John')).toBeInTheDocument();
-});
-
-// Avoid: Testing implementation
-test('calls useState', () => {
-  // Don't test React internals
-});
-```
-
-## Conclusion
-
-Modern React development is about writing maintainable, performant, and accessible applications. Focus on user experience, leverage TypeScript, and always consider the performance implications of your architectural decisions.
-
+---
+title: "Array updates that preserve previous state"
+date: "2026-10-15"
+summary: "Use a small immutable transformation and assertions to keep a sorted view from mutating shared state."
+excerpt: "Use a small immutable transformation and assertions to keep a sorted view from mutating shared state."
+author: "Technical Notes"
+tags: ["react", "arrays", "testing"]
 ---
 
-*Happy coding! Remember: the best code is code that your future self can understand and maintain.*
+# Array updates that preserve previous state
+
+A component may show one collection in several views: the original order, open work and a list sorted by priority. If a view sorts the shared array in place, the act of displaying it can also change the source order.
+
+React's state guidance treats arrays in state as read-only. A practical way to follow that guidance is to put the transformation in a small function that accepts an array and returns the view. The function can be checked independently of rendering.
+
+## A complete example
+Save this block as `example.mjs` and run `node example.mjs`. It needs no packages.
+
+~~~js
+import assert from "node:assert/strict";
+
+function openByPriority(rows) {
+  const rank = { high: 0, medium: 1, low: 2 };
+  return rows
+    .filter(row => !row.done)
+    .sort((a, b) => rank[a.priority] - rank[b.priority]);
+}
+function toggle(rows, id) {
+  return rows.map(row =>
+    row.id === id ? { ...row, done: !row.done } : row
+  );
+}
+
+const original = [
+  { id: "low", priority: "low", done: false },
+  { id: "high", priority: "high", done: false }
+];
+assert.deepEqual(openByPriority(original).map(row => row.id), ["high", "low"]);
+assert.deepEqual(original.map(row => row.id), ["low", "high"]);
+const changed = toggle(original, "low");
+assert.equal(changed[0].done, true);
+assert.equal(original[0].done, false);
+assert.deepEqual(openByPriority([]), []);
+console.log("array example passed");
+~~~
+
+Here `filter` supplies a fresh array before `sort` runs. The sort can reorder that result without reordering `original`. The toggle operation also creates a replacement object for the matching row; it does not merely copy the array and then mutate a shared object.
+
+## Connect the function to state
+A component can derive its visible rows from current state. An event that changes completion can pass the transformation to a functional state update, such as `setRows(current => toggle(current, id))`. Keep identifiers stable so one action selects one logical record.
+
+Do not mutate a row through the derived list. The unchanged rows still refer to the same objects. Sharing those objects is useful when the transformation only changes order or membership, but it does not make nested values immutable.
+
+## Verify the contract
+The returned order is only half the assertion. Keeping the original order unchanged catches an accidental replacement of the copy with an in-place sort. Empty input catches assumptions that the first row always exists. Equal-priority rows need a separately stated tie rule if their order matters to the product.
+
+This example does not establish rendering speed or justify memoizing every list. It checks the transformation's behavior. Measure a real rendering problem before adding another cache.
+
+References: [React: updating arrays in state](https://react.dev/learn/updating-arrays-in-state), [Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort).

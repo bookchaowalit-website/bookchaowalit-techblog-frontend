@@ -1,0 +1,63 @@
+---
+title: "Test browser persistence at the storage boundary"
+date: "2026-10-15"
+summary: "Exercise getItem and setItem, validate restored data and distinguish quota failure from successful persistence."
+excerpt: "Exercise getItem and setItem, validate restored data and distinguish quota failure from successful persistence."
+author: "Technical Notes"
+tags: ["localStorage", "validation", "testing"]
+---
+
+# Test browser persistence at the storage boundary
+
+A test that serializes an array and parses the same string proves a codec round trip. It does not prove that the application's persistence path calls browser storage.
+
+A small adapter makes that distinction visible. Pass a storage object into the functions used by the page. The test supplies a browser-shaped stub, and the page supplies localStorage. Both paths exercise the same getItem and setItem operations.
+
+## A complete write-and-read example
+Save this as `example.mjs` and run `node example.mjs`.
+
+~~~js
+import assert from "node:assert/strict";
+
+function load(storage, key) {
+  try {
+    const rows = JSON.parse(storage.getItem(key) ?? "[]");
+    if (!Array.isArray(rows)) return [];
+    return rows.filter(row => row && typeof row.id === "string"
+      && typeof row.text === "string");
+  } catch { return []; }
+}
+function save(storage, key, rows) {
+  try { storage.setItem(key, JSON.stringify(rows)); return true; }
+  catch { return false; }
+}
+
+const values = Object.create(null);
+const storage = {
+  getItem(key) { return values[key] ?? null; },
+  setItem(key, value) { values[key] = value; }
+};
+const rows = [{ id: "sample", text: "Synthetic note" }];
+assert.equal(save(storage, "example:notes", rows), true);
+assert.deepEqual(load(storage, "example:notes"), rows);
+assert.notEqual(load(storage, "example:notes"), rows);
+storage.setItem("example:notes", "broken");
+assert.deepEqual(load(storage, "example:notes"), []);
+assert.equal(save({ setItem() { throw new Error("Full"); } }, "x", rows), false);
+assert.deepEqual(rows, [{ id: "sample", text: "Synthetic note" }]);
+console.log("storage boundary example passed");
+~~~
+
+The fresh load obtains its value through getItem. Delete the setItem operation from `save` and the persisted-data assertion fails. Delete the getItem operation from `load` and the restored-data assertion fails. Those failures connect the test to the boundary it claims to cover.
+
+## Keep the error policy visible
+The example falls back to an empty array on unreadable or malformed data and reports a failed write with a boolean. A real product may need to preserve corrupt bytes for recovery or show a storage-full message. Decide that policy before overwriting a user's previous snapshot.
+
+The validator here accepts two fields only. Extend it when the UI requires timestamps, flags or unique identifiers. Do not assume that a syntactically valid JSON object can safely reach every rendering operation.
+
+## What the stub cannot prove
+A stub does not test browser permissions, real quotas, reload behavior, cross-tab events or the availability of the localStorage property itself. Put browser access inside the page's error boundary as well. Use a browser test when making a claim about those browser behaviors.
+
+Use synthetic records in examples. This pattern is for convenient local state, not credentials or a durable backup.
+
+Reference: [Window.localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).

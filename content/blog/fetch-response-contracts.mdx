@@ -1,0 +1,57 @@
+---
+title: "Check HTTP status and payload shape separately"
+date: "2026-10-15"
+summary: "Use synthetic Response objects to test HTTP failure, invalid JSON and an unexpected payload without calling a service."
+excerpt: "Use synthetic Response objects to test HTTP failure, invalid JSON and an unexpected payload without calling a service."
+author: "Technical Notes"
+tags: ["fetch", "http", "validation"]
+---
+
+# Check HTTP status and payload shape separately
+
+A completed network request does not automatically mean that an application received useful data. The HTTP response can report failure, its body can fail JSON parsing, or the parsed value can have a shape the page does not understand.
+
+Handle those boundaries separately. The distinction makes an error message more precise and gives each failure mode a small test. A TypeScript type annotation alone does not validate data received at runtime.
+
+## Exercise the response path without a server
+Save this as `example.mjs` and run it in a Node runtime that provides the global Response API. The example creates responses locally and makes no network calls.
+
+~~~js
+import assert from "node:assert/strict";
+
+async function readItems(response) {
+  if (!response.ok) throw new Error("HTTP " + response.status);
+  const body = await response.json();
+  if (!body || !Array.isArray(body.items)
+    || !body.items.every(item => item && typeof item.id === "string")) {
+    throw new Error("Unexpected items payload");
+  }
+  return body.items;
+}
+
+assert.deepEqual(
+  await readItems(Response.json({ items: [{ id: "sample" }] })),
+  [{ id: "sample" }]
+);
+await assert.rejects(
+  readItems(new Response("unavailable", { status: 503 })), /HTTP 503/
+);
+await assert.rejects(
+  readItems(Response.json({ items: [{ id: 7 }] })), /Unexpected items/
+);
+await assert.rejects(readItems(new Response("{broken")), SyntaxError);
+assert.deepEqual(await readItems(Response.json({ items: [] })), []);
+console.log("response contract example passed");
+~~~
+
+The first guard checks the HTTP result before interpreting the body. The second boundary is JSON parsing. The third validates the subset of the data shape that this page consumes. The example treats an empty items array as a successful response rather than a transport failure.
+
+## Connect it to fetch deliberately
+A caller can await `fetch(url)` and then pass the response into `readItems`. Network failures and aborts can reject before a Response exists, so the caller still needs an error path around the request itself. Avoid silently replacing every failure with an empty list: that can make an unavailable service look like a valid search with no matches.
+
+A response body is a stream. Design the error path so it does not expect to read that same body twice. If a server returns a structured error object, decide how to parse it without losing the original status.
+
+## Keep the claim narrow
+These local tests establish response-handling behavior. They do not establish a server's availability, CORS configuration, authentication or retry safety. A live integration check must name the actual environment and operation; a successful synthetic Response cannot stand in for it.
+
+Reference: [MDN: Using the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).
